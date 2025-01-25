@@ -264,12 +264,12 @@ def signup(request):
     return render(request, 'registration.html')
 
 
-
+@login_required(login_url='login')
 def investment_page(request):
     return render(request, 'investment_page.html')
 
  
-@login_required
+@login_required(login_url='login')
 def investment_form(request):
     # Retrieve the selected amount from the query parameter
     amount = request.GET.get('amount', None)

@@ -23,7 +23,7 @@
       <form action="{% url 'login' %}" method="POST" class="auth-form">
         {% csrf_token %}
         <label for="phone-number">Phone Number</label>
-        <input type="tel" id="phone-number" name="phone_number" required placeholder="Enter your phone number">
+        <input type="text" id="phone-number" name="phone_number" required placeholder="Enter your phone number">
         
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required placeholder="Enter your password">
