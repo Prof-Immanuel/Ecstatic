@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Ecstatic</title>
+  <link rel="stylesheet" href="{% static 'admin_dashboard.css' %}">
+</head>
+<body>
+  <header class="header">
+    <h1>Admin Dashboard</h1>
+  </header>
+
+  <main class="dashboard-container">
+    <!-- Platform Statistics -->
+    <section class="stats">
+      <h2>Platform Statistics</h2>
+      <div class="stat-item">
+        <span>Total Users:</span>
+        <span>{{ total_users }}</span>
+      </div>
+      <div class="stat-item">
+        <span>Total Loan Applications:</span>
+        <span>{{ total_loans }}</span>
+      </div>
+      <div class="stat-item">
+        <span>Approved Applications:</span>
+        <span>{{ approved_loans }}</span>
+      </div>
+      <div class="stat-item">
+        <span>Pending Applications:</span>
+        <span>{{ pending_loans }}</span>
+      </div>
+    </section>
+
+    <!-- Loan Applications Table -->
+    <section class="loan-applications">
+      <h2>Loan Applications</h2>
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Applicant</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for application in loan_applications %}
+          <tr>
+            <td>{{ application.id }}</td>
+            <td>{{ application.user.first_name }} {{ application.user.last_name }}</td>
+            <td>K{{ application.amount }}</td>
+            <td>
+              {% if application.approved %}
+                Approved
+              {% else %}
+                Pending
+              {% endif %}
+            </td>
+            <td>
+              {% if not application.approved %}
+                <form action="{% url 'approve_application' application.id %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="approve-btn">Approve</button>
+                </form>
+                <form action="{% url 'reject_application' application.id %}" method="POST" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="reject-btn">Reject</button>
+                </form>
+              {% endif %}
+              {% if application.approved %}
+                <span class="approved">Approved</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5">No loan applications found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>

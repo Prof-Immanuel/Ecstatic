@@ -1,0 +1,162 @@
+/* investment_page.css */
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  background-color: #f8f9fa; /* Light background for a clean design */
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Page Container */
+.investment-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.investment-section h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.investment-section h3 {
+  font-size: 1.5rem;
+  color: #34495e;
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+/* Paragraphs */
+.investment-section p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table th, 
+table td {
+  padding: 12px 15px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #2c3e50;
+  color: #fff;
+  font-weight: bold;
+}
+
+table td {
+  background-color: #f9f9f9;
+}
+
+table tr:nth-child(even) td {
+  background-color: #eef2f7;
+}
+
+table tr:hover td {
+  background-color: #dfe6e9;
+  transition: background-color 0.3s ease;
+}
+
+/* Buttons */
+button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* Call-to-Action Section */
+.cta {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.cta p {
+  font-size: 1.2rem;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.cta-button {
+  background-color: #e74c3c;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #c0392b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .investment-section {
+    padding: 10px;
+  }
+
+  table th, 
+  table td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .cta-button {
+    font-size: 0.9rem;
+    padding: 8px 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+  }
+
+  .cta-button {
+    font-size: 0.8rem;
+    padding: 7px 12px;
+  }
+}

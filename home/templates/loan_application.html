@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply for a Loan - Ecstatic</title>
+  <link rel="stylesheet" href="{% static 'loan_application.css' %}">
+</head>
+<body>
+  <div class="loan-section">
+    <div class="loan-container">
+      <h2>Loan Application</h2>
+      {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        {% if "apply_loan" in message.tags %}
+            <div class="alert {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+      <form action="{% url 'apply_loan' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="amount">Loan Amount</label>
+        <input type="number" step="0.01" id="amount" name="amount" required placeholder="Enter the loan amount">
+    
+        <label for="loan-reason">Reason for Loan</label>
+        <textarea id="loan-reason" name="loan_reason" required placeholder="Enter the reason for applying"></textarea>
+        
+        <label for="collateral">Location</label>
+        <input type="text" id="collateral" name="collateral" required placeholder="Enter your collateral">
+
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" required placeholder="Enter your location">
+
+        <label for="repayment-duration">Repayment Duration</label>
+        <select id="repayment-duration" name="repayment_duration" required>
+          <option value="1week">1 week - 15% interest</option>
+          <option value="2weeks">2 weeks - 20% interest</option>
+          <option value="3weeks">3 weeks - 30% interest</option>
+          <option value="4weeks">4 weeks - 40% interest</option>
+        </select>
+
+        <label for="nrc-front">NRC Front Photo</label>
+        <input type="file" id="nrc-front" name="nrc_front" accept="image/*" required>
+    
+        <label for="nrc-back">NRC Back Photo</label>
+        <input type="file" id="nrc-back" name="nrc_back" accept="image/*" required>
+    
+        <label for="photo">Your Photo</label>
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+    
+        <label for="bank-statement">Bank Statement (Optional)</label>
+        <input type="file" id="bank-statement" name="bank_statement" accept=".pdf, .jpg, .jpeg, .png">
+    
+        <label for="pay-slip">Pay Slip (Optional)</label>
+        <input type="file" id="pay-slip" name="pay_slip" accept=".pdf, .jpg, .jpeg, .png">
+    
+        <button type="submit">Submit Loan Application</button>
+    </form>
+    
+      <p class="info-text">
+        Note: Loan applications are subject to approval. You will be notified via phone once your application is reviewed.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

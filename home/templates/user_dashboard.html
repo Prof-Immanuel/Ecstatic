@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - Ecstatic</title>
+  <link rel="stylesheet" href="{% static 'user_dashboard.css' %}">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h2>Ecstatic</h2>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="{% url 'apply_loan' %}">Loan Applications</a></li>
+        <li><a href="#profile">Profile</a></li>
+        <li><a href="#testimonial">Testimonial</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="dashboard-header">
+        <h1>Welcome, <span id="user-name">{{ profile_data.name }}</span></h1>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+      </header>
+
+      <h2>Approved Loan Details</h2>
+      <div class="dashboard-cards">
+        {% for loan in loan_details %}
+          <div class="card">
+            <h3>Loan Amount: K{{ loan.amount }}</h3>
+            <p><strong>Repayment Duration:</strong> {{ loan.repayment_duration }}</p> 
+            <p><strong>Due Date:</strong> {{ loan.due_date|date:"F d, Y" }}</p>
+            <p><strong>Total Repayment:</strong> K{{ loan.total_repayment }}</p>
+            <p><strong>Loan Date:</strong> <span class="due-date">{{ loan.created_at|date:"F d, Y" }}</span></p>
+          </div>
+        {% endfor %}
+    </div>
+    
+
+      <div class="profile-section" id="profile">
+        <h3>Profile Details</h3>
+        <p><strong>Name:</strong> {{ profile_data.name }}</p>
+        <p><strong>Phone:</strong> {{ profile_data.phone }}</p>
+        <button class="edit-profile-btn">Edit Profile</button>
+      </div>
+
+      <!-- Testimonial Form Section -->
+      <div class="testimonial-section" id="testimonial">
+        <h3>Submit Your Testimonial</h3>
+        <form action="{% url 'user_dashboard' %}" method="POST">
+          {% csrf_token %}
+          <label for="testimonial">Your Testimonial</label>
+          <textarea id="testimonial" name="testimonial" rows="4" required placeholder="Write your testimonial here..."></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

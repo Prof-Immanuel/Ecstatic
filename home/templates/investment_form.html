@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Form</title>
+  <link rel="stylesheet" href="{% static 'investment_styles.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h2>Investment Form</h2>
+    {% for message in messages %}
+    {% if "investment_success" in message.tags %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endif %}
+{% endfor %}
+
+    <p>You're about to invest in the plan with an amount of <strong>K{{ amount }}</strong>.</p>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="amount" value="{{ amount }}">
+      <p><strong>Username:</strong> {{ username }}</p>
+      <p><strong>Phone:</strong> {{ phone }}</p>
+      <label for="month">Select Investment Duration:</label>
+      <select name="month" id="month" required>
+        <option value="1st Month">1st Month</option>
+        <option value="2nd Month">2nd Month</option>
+        <option value="3rd Month">3rd Month</option>
+      </select>
+      <button type="submit">Submit Investment</button>
+    </form>
+  </div>
+</body>
+</html>

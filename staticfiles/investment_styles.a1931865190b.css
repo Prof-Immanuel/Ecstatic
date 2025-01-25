@@ -1,0 +1,182 @@
+/* General Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  color: #444;
+}
+
+p {
+  text-align: center;
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+.container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+/* Form Styles */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+form label {
+  font-weight: bold;
+}
+
+form select {
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+form button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+form input[type="hidden"] {
+  display: none;
+}
+
+/* Text Styling */
+form p, .container p {
+  line-height: 1.6;
+}
+
+.container p strong {
+  color: #007bff;
+}
+
+/* Success Page Styles */
+.success-container {
+  text-align: center;
+}
+
+.success-container h2 {
+  color: #28a745;
+}
+
+.success-container p {
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.success-container a {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #ffffff;
+  background-color: #007bff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.success-container a:hover {
+  background-color: #0056b3;
+}
+
+.alert-container {
+  margin-bottom: 20px;
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.alert.error {
+  background-color: #e74c3c;
+}
+
+.alert.success {
+  background-color: #2ecc71;
+}
+
+.alert.warning {
+  background-color: #f39c12;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    margin: 20px;
+    padding: 15px;
+  }
+
+  h2, p {
+    font-size: 14px;
+    margin: 10px 0;
+  }
+
+  form {
+    gap: 10px;
+  }
+
+  form button, .success-container a {
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .success-container a {
+    padding: 10px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .container {
+    padding: 10px;
+  }
+
+  form select, form button {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .success-container p {
+    font-size: 16px;
+  }
+}

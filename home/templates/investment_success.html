@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Successful</title>
+  <link rel="stylesheet" href="{% static 'investment_styles.css' %}">
+</head>
+<body>
+  <div class="container success-container">
+    <h2>Investment Successful</h2>
+    <p>Thank you, <strong>{{ username }}</strong>, for your investment. A confirmation email has been sent to the admin for review. Our team will contact you shortly for you to make the payment.</p>
+    <a href="/">Go Back to Home</a>
+  </div>
+</body>
+</html>
