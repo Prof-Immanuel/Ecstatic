@@ -6,7 +6,7 @@ body {
   padding: 0;
 }
 
-html{
+html {
   scroll-behavior: smooth;
 }
 
@@ -52,7 +52,7 @@ html{
   background-color: #34495e;
 }
 
-h2{
+h2 {
   text-align: center;
 }
 
@@ -112,16 +112,14 @@ h2{
   color: #7f8c8d;
 }
 
-/* For the due date and created date inside the loan card */
 .card .due-date {
-  font-size: 14px; /* Smaller font size */
-  color: #27ae60; /* Green color */
-  float: right; /* Align to the right */
-  font-style: italic; /* Optional: makes it stand out as a different style */
+  font-size: 14px;
+  color: #27ae60;
+  float: right;
+  font-style: italic;
 }
 
-
-.profile-section {
+.profile-section, .testimonial-section {
   background-color: white;
   border-radius: 8px;
   padding: 20px;
@@ -129,12 +127,12 @@ h2{
   margin-top: 30px;
 }
 
-.profile-section h3 {
+.profile-section h3, .testimonial-section h3 {
   font-size: 22px;
   color: #2c3e50;
 }
 
-.profile-section p {
+.profile-section p, .testimonial-section label {
   font-size: 16px;
   color: #7f8c8d;
 }
@@ -150,28 +148,6 @@ h2{
 
 .edit-profile-btn:hover {
   background-color: #2980b9;
-}
-
-.testimonial-section {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 30px;
-}
-
-.testimonial-section h3 {
-  font-size: 22px;
-  color: #2c3e50;
-}
-
-.testimonial-section form {
-  margin-top: 20px;
-}
-
-.testimonial-section label {
-  font-size: 16px;
-  color: #2c3e50;
 }
 
 .testimonial-section textarea {
@@ -194,4 +170,56 @@ h2{
 
 .testimonial-section button:hover {
   background-color: #27ae60;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 210px;
+    padding: 15px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .dashboard-cards .card {
+    width: 90%;
+  }
+
+  .sidebar-menu li {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .logout-btn {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+
+  .dashboard-cards {
+    flex-direction: column;
+  }
 }
