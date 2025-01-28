@@ -1,80 +1,134 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f8f9fa;
-  }
-  
-  .header {
-    background-color: #007bff;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-  }
-  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+.header {
+  background-color: #007bff;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+.dashboard-container {
+  padding: 2rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  background-color: #fff;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.loan-applications table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+}
+
+.loan-applications table thead {
+  background-color: #007bff;
+  color: white;
+}
+
+.loan-applications table th,
+.loan-applications table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.loan-applications table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.approve-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.approve-btn:hover {
+  background-color: #218838;
+}
+
+.reject-btn {
+  background-color: #c51e1e;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.reject-btn:hover {
+  background-color: #a11b1b;
+}
+
+.approved {
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
   .dashboard-container {
-    padding: 2rem;
-  }
-  
-  .stats {
-    margin-bottom: 2rem;
-  }
-  
-  .stat-item {
-    background-color: #fff;
     padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
   }
-  
-  .loan-applications table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
+
+  .stats {
+    grid-template-columns: 1fr;
   }
-  
-  .loan-applications table thead {
-    background-color: #007bff;
-    color: white;
-  }
-  
+
   .loan-applications table th,
   .loan-applications table td {
-    border: 1px solid #ddd;
-    padding: 0.75rem;
-    text-align: left;
+    font-size: 0.9rem;
+    padding: 0.5rem;
   }
-  
-  .loan-applications table tr:nth-child(even) {
-    background-color: #f2f2f2;
+
+  .loan-applications table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
-  
-  .approve-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 3px;
-    cursor: pointer;
+
+  .stat-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
-  
-  .approve-btn:hover {
-    background-color: #218838;
+}
+
+@media (max-width: 480px) {
+  .header {
+    font-size: 1.2rem;
   }
-  
-  .approved {
-    color: #28a745;
-    font-weight: bold;
+
+  .approve-btn, .reject-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
   }
-  
-  .reject-btn{
-    background-color: #c51e1e;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 3px;
-    cursor: pointer;
+
+  .loan-applications table th,
+  .loan-applications table td {
+    font-size: 0.8rem;
+    padding: 0.4rem;
   }
+}

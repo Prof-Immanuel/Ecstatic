@@ -14,7 +14,7 @@ class LoanApplication(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     loan_reason = models.TextField()
-    Collateral = models.CharField(max_length=255, blank=True, null=True) 
+    collateral = models.CharField(max_length=255, blank=True, null=True) 
     location = models.CharField(max_length=255, blank=True, null=True) 
     repayment_duration = models.CharField(
         max_length=7,
