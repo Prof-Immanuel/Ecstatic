@@ -26,8 +26,8 @@ def apply_loan(request):
         amount = request.POST.get('amount')
         loan_reason = request.POST.get('loan_reason')
         collateral = request.POST.get('collateral')
-        location = request.POST.get('location')  # New field
-        repayment_duration = request.POST.get('repayment_duration')  # New field
+        location = request.POST.get('location') 
+        repayment_duration = request.POST.get('repayment_duration')  
         nrc_front = request.FILES.get('nrc_front')
         nrc_back = request.FILES.get('nrc_back')
         photo = request.FILES.get('photo')
