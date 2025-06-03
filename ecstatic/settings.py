@@ -82,20 +82,24 @@ WSGI_APPLICATION = 'ecstatic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'hwYVfOjhqnoaZKEmRPXOGDNOHNwVofEE',
-        'HOST': 'junction.proxy.rlwy.net',  
-        'PORT': '14876',
+        'NAME': 'postgres',
+        'USER': 'postgres.wfedrqxstjidrwlroukk',
+        'PASSWORD': '@Profimmanuel2003',
+        'HOST': 'aws-0-eu-central-1.pooler.supabase.com',
+        'PORT': '5432',
+       
     }
 }
+
+
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'   
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'ecstaticfinance@gmail.com'  
-EMAIL_HOST_PASSWORD = 'gxmg xtvh bebc pvuz'  
+EMAIL_HOST_PASSWORD = 'klsn vngn wuot eqjh'  
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 ADMIN_EMAIL = 'ecstaticfinance@gmail.com'

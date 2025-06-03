@@ -93,6 +93,27 @@ def apply_loan(request):
 
             # Send the email
             email.send(fail_silently=False)
+            
+            # Generate WhatsApp message and redirect
+            import urllib.parse
+            from django.http import HttpResponseRedirect
+
+            whatsapp_number = "260767337145"  # Use international format without leading zero
+            whatsapp_message = f"""
+            New Loan Application:
+
+            Name: {request.user.first_name} {request.user.last_name}
+            Amount: {amount}
+            Reason: {loan_reason}
+            Collateral: {collateral}
+            Location: {location}
+            Repayment Duration: {repayment_duration}
+            """
+            encoded_message = urllib.parse.quote(whatsapp_message)
+            whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
+
+            return HttpResponseRedirect(whatsapp_url)
+
 
             return redirect('loan_success')
         except Exception as e:
