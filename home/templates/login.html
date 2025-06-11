@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - MoneyLend</title>
+  <title>Login - Ecstatic Finance</title>
   <link rel="stylesheet" href="{% static 'registration.css' %}">
 </head>
 <body>
@@ -13,12 +13,13 @@
       <h2>Login</h2>
       <div class="messages">
         {% if messages %}
-          {% for message in messages %}
-          {% if "login" in message.tags %}
+        {% for message in messages %}
+          {% if 'login' in message.tags %}
             <div class="alert {{ message.tags }}">{{ message }}</div>
           {% endif %}
-          {% endfor %}
-        {% endif %}
+        {% endfor %}
+      {% endif %}
+
       </div>
       <form action="{% url 'login' %}" method="POST" class="auth-form">
         {% csrf_token %}

@@ -10,6 +10,8 @@ from django.core.mail import EmailMessage
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+import urllib.parse
 
 
 # Create your views here.
@@ -19,24 +21,23 @@ def index(request):
 
 
 
+
+
 @login_required(login_url='login')
 def apply_loan(request):
     if request.method == 'POST':
-        # Get the form data
+        # Get form data
         amount = request.POST.get('amount')
         loan_reason = request.POST.get('loan_reason')
         collateral = request.POST.get('collateral')
         location = request.POST.get('location') 
         repayment_duration = request.POST.get('repayment_duration')  
-        nrc_front = request.FILES.get('nrc_front')
-        nrc_back = request.FILES.get('nrc_back')
-        photo = request.FILES.get('photo')
-        bank_statement = request.FILES.get('bank_statement')
-        pay_slip = request.FILES.get('pay_slip')
+        nrc_number = request.POST.get('nrc_number')
+        phone_number = request.POST.get('phone_number')
 
         # Validate required fields
-        if not (nrc_front and nrc_back and photo):
-            messages.error(request, "Please upload all required files.",  extra_tags="apply_loan")
+        if not nrc_number:
+            messages.error(request, "Please enter your NRC number.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
         try:
@@ -46,25 +47,27 @@ def apply_loan(request):
                 amount=amount,
                 loan_reason=loan_reason,
                 collateral=collateral,
-                location=location, 
-                repayment_duration=repayment_duration,  
+                location=location,
+                repayment_duration=repayment_duration,
+                nrc_number=nrc_number,
+                phone_number=phone_number
             )
-            loan_application.save()
 
-            # Send email to the company's email address
-            company_email = "ecstaticfinance@gmail.com"  # Replace with the company's email address
+            # Send email to the company
+            company_email = "ecstaticfinance@gmail.com"
             subject = "New Loan Application Submission"
             message = f"""
             A new loan application has been submitted.
 
             Applicant: {request.user.first_name} {request.user.last_name}
+            Phone: {request.user.username}
+            NRC Number: {nrc_number}
+            Phone Number: {phone_number}
             Amount Requested: {amount}
             Loan Reason: {loan_reason}
             Collateral: {collateral}
             Location: {location}
             Repayment Duration: {repayment_duration}
-
-            Please review the attached files for more details.
             """
 
             email = EmailMessage(
@@ -73,36 +76,16 @@ def apply_loan(request):
                 settings.DEFAULT_FROM_EMAIL,
                 [company_email],
             )
-
-            # Attach files
-            if nrc_front:
-                nrc_front.seek(0)
-                email.attach(nrc_front.name, nrc_front.read(), nrc_front.content_type)
-            if nrc_back:
-                nrc_back.seek(0)
-                email.attach(nrc_back.name, nrc_back.read(), nrc_back.content_type)
-            if photo:
-                photo.seek(0)
-                email.attach(photo.name, photo.read(), photo.content_type)
-            if bank_statement:
-                bank_statement.seek(0)
-                email.attach(bank_statement.name, bank_statement.read(), bank_statement.content_type)
-            if pay_slip:
-                pay_slip.seek(0)
-                email.attach(pay_slip.name, pay_slip.read(), pay_slip.content_type)
-
-            # Send the email
             email.send(fail_silently=False)
-            
-            # Generate WhatsApp message and redirect
-            import urllib.parse
-            from django.http import HttpResponseRedirect
 
-            whatsapp_number = "260767337145"  # Use international format without leading zero
+            # Redirect to WhatsApp
+            whatsapp_number = "260767337145"
             whatsapp_message = f"""
             New Loan Application:
 
             Name: {request.user.first_name} {request.user.last_name}
+            NRC: {nrc_number}
+            Phone Number: {phone_number}
             Amount: {amount}
             Reason: {loan_reason}
             Collateral: {collateral}
@@ -114,10 +97,8 @@ def apply_loan(request):
 
             return HttpResponseRedirect(whatsapp_url)
 
-
-            return redirect('loan_success')
         except Exception as e:
-            messages.error(request, f"An error occurred: {e}. Please try again",  extra_tags="apply_loan")
+            messages.error(request, f"An error occurred: {e}. Please try again.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')

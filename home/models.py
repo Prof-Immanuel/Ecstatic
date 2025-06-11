@@ -14,19 +14,17 @@ class LoanApplication(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     loan_reason = models.TextField()
-    collateral = models.CharField(max_length=255, blank=True, null=True) 
-    location = models.CharField(max_length=255, blank=True, null=True) 
+    collateral = models.CharField(max_length=255, blank=True, null=True)
+    location = models.CharField(max_length=255, blank=True, null=True)
     repayment_duration = models.CharField(
         max_length=7,
         choices=REPAYMENT_OPTIONS,
         default='1week'
     )
+    nrc_number = models.CharField(max_length=50, default='unknown')  # ✅ New field
+    phone_number = models.CharField(max_length=50, default='null')  # ✅ New field
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Loan Application by {self.user.username} - Amount: {self.amount}"
-
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name} - {self.amount}"

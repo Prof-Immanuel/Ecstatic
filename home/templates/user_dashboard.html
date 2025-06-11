@@ -15,6 +15,7 @@
         <h2>Ecstatic</h2>
       </div>
       <ul class="sidebar-menu">
+        <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="#">Dashboard</a></li>
         <li><a href="{% url 'apply_loan' %}">Loan Applications</a></li>
         <li><a href="#profile">Profile</a></li>
@@ -23,12 +24,22 @@
       </ul>
     </nav>
 
+    <!-- Hamburger Menu Button (visible on small screens) -->
+<button id="hamburger-btn" aria-label="Toggle menu" aria-expanded="false">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
+
+
     <!-- Main Content -->
     <div class="main-content">
       <header class="dashboard-header">
         <h1>Welcome, <span id="user-name">{{ profile_data.name }}</span></h1>
         <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
       </header>
+
+
 
       <h2>Approved Loan Details</h2>
       <div class="dashboard-cards">
@@ -60,10 +71,44 @@
           <textarea id="testimonial" name="testimonial" rows="4" required placeholder="Write your testimonial here..."></textarea>
           <button type="submit">Submit</button>
         </form>
+
+                 <!-- Dashboard African People Section -->
+    <div class="dashboard-african-people">
+      <h3>Meet Our Community</h3>
+      <div class="dashboard-images">
+        <img src="{% static 'images/ecstatic.jpg' %}" alt="Community Member 1" />
+        <img src="{% static 'images/ecstatic2.jpg' %}" alt="Community Member 2" />
+        <img src="{% static 'images/ecstatic3.jpg' %}" alt="Community Member 3" />
+        <img src="{% static 'images/ecstatic4.jpg' %}" alt="Community Member 4" />
+      </div>
+    </div>
       </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+  
+    hamburgerBtn.addEventListener('click', () => {
+      const expanded = hamburgerBtn.getAttribute('aria-expanded') === 'true';
+      hamburgerBtn.setAttribute('aria-expanded', !expanded);
+      sidebar.classList.toggle('open');
+      document.body.classList.toggle('menu-open');
+      mainContent.classList.toggle('menu-active');
+    });
+  
+    // Optional: Close sidebar if user clicks outside sidebar on small screen
+    mainContent.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) {
+        sidebar.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        mainContent.classList.remove('menu-active');
+        hamburgerBtn.setAttribute('aria-expanded', false);
+      }
+    });
+  </script>
+  
 </body>
 </html>

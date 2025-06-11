@@ -66,6 +66,59 @@ body {
   border-radius: 5px;
 }
 
+/* Hamburger Button */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: content-box;
+  z-index: 1001; /* Above nav */
+}
+
+.hamburger:focus {
+  outline: none;
+}
+
+.hamburger .bar {
+  width: 100%;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Mobile Navigation - hide by default */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav-links li {
+  margin: 0 15px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+
+
 .header .btn:hover {
   background: #2980b9;
 }
@@ -89,8 +142,8 @@ body {
 }
 
 .hero .btn {
-  background: white;
-  color: #3498db;
+  background: #3498db;
+  color: white;
   padding: 10px 30px;
   text-decoration: none;
   border-radius: 5px;
@@ -98,7 +151,84 @@ body {
 }
 
 .hero .btn:hover {
-  background: #ecf0f1;
+  background: #0aacd4;
+}
+
+.homepage-background {
+  position: relative; /* needed for overlay positioning */
+  background-image: url('/static/images/ecstatic1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 400px;
+  color: white;
+  text-shadow: 0 0 8px rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0; /* make sure this is below overlay */
+}
+
+.homepage-background::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* black overlay with 50% opacity */
+  z-index: -1; /* behind the content */
+}
+
+
+/* Calculator styles */
+#loan-calculator {
+  background-color: #f7f9fc;
+  padding: 20px;
+  margin: 30px auto;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+#loan-calculator h2 {
+  margin-bottom: 15px;
+  color: #1d4ed8;
+  text-align: center;
+}
+#loan-calculator label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #333;
+}
+#loan-calculator input,
+#loan-calculator select {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+#loan-calculator button {
+  margin-top: 15px;
+  padding: 10px;
+  width: 100%;
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  font-size: 1.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+#loan-calculator button:hover {
+  background-color: #2563eb;
+}
+#calc-result {
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: center;
+  color: #111;
 }
 
 /* Features Section */
@@ -264,6 +394,51 @@ h2 {
   .footer {
     font-size: 0.8rem;
   }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav {
+    position: fixed;
+    top: 60px; /* height of header */
+    left: 0;
+    right: 0;
+    background-color: #2c3e50;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease-out;
+    z-index: 1000;
+  }
+
+  .nav.open {
+    max-height: 300px; /* enough to show all links */
+    transition: max-height 0.5s ease-in;
+  }
+
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .nav-links li {
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .nav-links a {
+    display: block;
+    padding: 10px 0;
+  }
+
+  .btn {
+    margin: 10px auto;
+    display: block;
+    width: 80%;
+    text-align: center;
+  }
+
 }
 
 @media (max-width: 480px) {

@@ -2,17 +2,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ecstatic - Fast Loans, Anytime</title>
-  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <link rel="stylesheet" href="{% static 'styles.css' %}" />
+ 
 </head>
 <body>
   <!-- Header -->
   <header class="header">
     <div class="container">
       <h1 class="logo">Ecstatic</h1>
-      <nav class="nav">
+  
+      <!-- Hamburger menu button -->
+      <button class="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+  
+      <nav class="nav" id="mobile-menu">
         <ul class="nav-links">
           <li><a href="#how-it-works">How It Works</a></li>
           <li><a href="#testimonials">Testimonials</a></li>
@@ -28,14 +37,34 @@
       </nav>
     </div>
   </header>
+  
 
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero homepage-background">
     <div class="container">
       <h1>Get Instant Loans, Anytime, Anywhere</h1>
       <p>Fast, secure, and flexible loans designed for your needs. No paperwork, no hassle.</p>
       <a href="{% url 'apply_loan' %}" class="btn">Apply Now</a>
     </div>
+  </section>
+
+  <!-- Loan Repayment Calculator -->
+  <section id="loan-calculator">
+    <h2>Loan Repayment Calculator</h2>
+    <label for="calc-amount">Enter Loan Amount:</label>
+    <input type="number" id="calc-amount" placeholder="e.g. 500" min="0" step="0.01" />
+
+    <label for="calc-duration">Select Repayment Duration:</label>
+    <select id="calc-duration">
+      <option value="0.15">1 week - 15% interest</option>
+      <option value="0.20">2 weeks - 20% interest</option>
+      <option value="0.30">3 weeks - 30% interest</option>
+      <option value="0.40">4 weeks - 40% interest</option>
+    </select>
+
+    <button type="button" onclick="calculateRepayment()">Calculate</button>
+
+    <div id="calc-result"></div>
   </section>
 
   <!-- Features Section -->
@@ -72,29 +101,26 @@
     </div>
   </section>
 
-<!-- Testimonials Section -->
-<section id="testimonials" class="testimonials">
-  <div class="testimonials-container">
-    <h2>User Testimonials</h2>
-    <div class="carousel">
-      <div class="carousel-track">
-        {% for testimonial in testimonials %}
-          <div class="testimonial">
-            <p>"{{ testimonial.content }}"</p>
-            <small>— <strong>{{ testimonial.user.first_name }} {{ testimonial.user.last_name }}</strong>, <span class="date">{{ testimonial.created_at|date:"F j, Y" }}</span></small>
-          </div>
-        {% empty %}
-          <p class="no-testimonials">No testimonials available at the moment.</p>
-        {% endfor %}
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="testimonials">
+    <div class="testimonials-container">
+      <h2>User Testimonials</h2>
+      <div class="carousel">
+        <div class="carousel-track">
+          {% for testimonial in testimonials %}
+            <div class="testimonial">
+              <p>"{{ testimonial.content }}"</p>
+              <small>— <strong>{{ testimonial.user.first_name }} {{ testimonial.user.last_name }}</strong>, <span class="date">{{ testimonial.created_at|date:"F j, Y" }}</span></small>
+            </div>
+          {% empty %}
+            <p class="no-testimonials">No testimonials available at the moment.</p>
+          {% endfor %}
+        </div>
       </div>
+      <button class="carousel-btn prev-btn">❮</button>
+      <button class="carousel-btn next-btn">❯</button>
     </div>
-    <button class="carousel-btn prev-btn">❮</button>
-    <button class="carousel-btn next-btn">❯</button>
-  </div>
-</section>
-
-
-
+  </section>
 
   <!-- Call to Action -->
   <section id="contact" class="cta">
@@ -104,7 +130,6 @@
       <a href="tel:+260771131493" style="color: #007BFF; text-decoration: none; font-weight: bold;">
         Contact us
       </a>
-      
     </div>
   </section>
 
@@ -114,30 +139,57 @@
       <p>&copy; 2025 Ecstatic. All rights reserved.</p>
     </div>
   </footer>
+
   <script>
+    function calculateRepayment() {
+      const amount = parseFloat(document.getElementById('calc-amount').value);
+      const rate = parseFloat(document.getElementById('calc-duration').value);
+      const resultDiv = document.getElementById('calc-result');
+
+      if (isNaN(amount) || amount <= 0) {
+        resultDiv.textContent = "Please enter a valid loan amount greater than zero.";
+        return;
+      }
+
+      const interest = amount * rate;
+      const total = amount + interest;
+
+      resultDiv.textContent = `You will repay a total of K${total.toFixed(2)} (including K${interest.toFixed(2)} interest).`;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      // Existing carousel code
       const track = document.querySelector('.carousel-track');
       const testimonials = document.querySelectorAll('.testimonial');
       const prevBtn = document.querySelector('.prev-btn');
       const nextBtn = document.querySelector('.next-btn');
-      
+
       let currentIndex = 0;
-    
-      // Function to update the slide position
+
       function updateSlidePosition() {
         track.style.transform = `translateX(-${currentIndex * 100}%)`;
       }
-    
-      // Move to the previous testimonial
+
       prevBtn.addEventListener('click', () => {
         currentIndex = (currentIndex > 0) ? currentIndex - 1 : testimonials.length - 1;
         updateSlidePosition();
       });
-    
-      // Move to the next testimonial
+
       nextBtn.addEventListener('click', () => {
         currentIndex = (currentIndex < testimonials.length - 1) ? currentIndex + 1 : 0;
         updateSlidePosition();
+      });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const hamburger = document.querySelector('.hamburger');
+      const nav = document.querySelector('.nav');
+    
+      hamburger.addEventListener('click', () => {
+        const expanded = hamburger.getAttribute('aria-expanded') === 'true' || false;
+        hamburger.setAttribute('aria-expanded', !expanded);
+        nav.classList.toggle('open');
       });
     });
     

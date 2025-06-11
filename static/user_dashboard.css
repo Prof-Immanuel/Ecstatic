@@ -56,6 +56,34 @@ h2 {
   text-align: center;
 }
 
+.african-people .image-gallery,
+.dashboard-african-people .dashboard-images {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* Images have a base size */
+.african-people img,
+.dashboard-african-people img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease;
+}
+
+.african-people img:hover,
+.dashboard-african-people img:hover {
+  transform: scale(1.05);
+}
+
+
+
+
 /* Main Content */
 .main-content {
   margin-left: 270px;
@@ -172,6 +200,32 @@ h2 {
   background-color: #27ae60;
 }
 
+/* Hamburger Button Styles */
+#hamburger-btn {
+  display: none; /* hidden by default */
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  width: 30px;
+  height: 25px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1001;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#hamburger-btn .bar {
+  height: 3px;
+  width: 100%;
+  background-color: rgb(163, 159, 159);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .sidebar {
@@ -193,6 +247,12 @@ h2 {
 
   .sidebar-menu li {
     font-size: 16px;
+  }
+
+  .african-people img,
+  .dashboard-african-people img {
+    width: 150px;
+    height: 150px;
   }
 }
 
@@ -222,4 +282,53 @@ h2 {
   .dashboard-cards {
     flex-direction: column;
   }
+
+  .african-people img,
+  .dashboard-african-people img {
+    width: 100px;
+    height: 100px;
+  }
+
+  h1 {
+    margin-top: 50px;
+  }
+
+  #hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -300px; /* hide sidebar initially */
+    width: 250px;
+    height: 100%;
+    background-color: #2c3e50;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    transition: left 0.3s ease;
+    z-index: 1000;
+  }
+
+  .sidebar.open {
+    left: 0; /* show sidebar */
+  }
+
+  /* When sidebar is open, prevent scrolling on body */
+  body.menu-open {
+    overflow: hidden;
+  }
+
+  /* Push main content right when menu is open */
+  .main-content {
+    margin-left: 0;
+    padding: 10px;
+    transition: filter 0.3s ease;
+  }
+
+  .main-content.menu-active {
+    filter: brightness(0.7);
+    pointer-events: none; /* disable interaction */
+  }
+
 }
