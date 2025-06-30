@@ -124,6 +124,12 @@ body {
   background: #2980b9;
 }
 
+/* Hide by default */
+.mobile-auth-buttons {
+  display: none;
+}
+
+
 /* Hero Section */
 .hero {
   background: #3498db;
@@ -372,6 +378,10 @@ h2 {
   .header .nav {
     flex-direction: column;
     gap: 10px;
+  }
+
+  .mobile-auth-buttons {
+    display: block;
   }
 
   .header .nav-links{
