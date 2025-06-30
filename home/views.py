@@ -79,7 +79,7 @@ def apply_loan(request):
             email.send(fail_silently=False)
 
             # Redirect to WhatsApp
-            whatsapp_number = "260767337145"
+            whatsapp_number = "260771131493"
             whatsapp_message = f"""
             New Loan Application:
 
