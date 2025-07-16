@@ -34,7 +34,8 @@ def apply_loan(request):
         loan_reason = request.POST.get('loan_reason')
         collateral = request.POST.get('collateral')
         location = request.POST.get('location') 
-        repayment_duration = request.POST.get('repayment_duration')  
+        repayment_duration = request.POST.get('repayment_duration') 
+        estimated_income = request.POST.get('estimated_income') 
         nrc_number = request.POST.get('nrc_number')
         phone_number = request.POST.get('phone_number')
         nrc_photo = request.FILES.get('nrc_photo')
@@ -76,6 +77,7 @@ def apply_loan(request):
                 collateral=collateral,
                 location=location,
                 repayment_duration=repayment_duration,
+                estimated_income=estimated_income,
                 nrc_number=nrc_number,
                 phone_number=phone_number,
                 nrc_photo=compressed_image
@@ -94,6 +96,7 @@ def apply_loan(request):
             Amount Requested: {amount}
             Loan Reason: {loan_reason}
             Collateral: {collateral}
+            Estimated Income: {estimated_income}
             Location: {location}
             Repayment Duration: {repayment_duration}
             """
@@ -122,6 +125,7 @@ def apply_loan(request):
             Amount: {amount}
             Reason: {loan_reason}
             Collateral: {collateral}
+            Estimated Income: {estimated_income}
             Location: {location}
             Repayment Duration: {repayment_duration}
             """

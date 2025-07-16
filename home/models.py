@@ -21,9 +21,10 @@ class LoanApplication(models.Model):
         choices=REPAYMENT_OPTIONS,
         default='1week'
     )
-    nrc_number = models.CharField(max_length=50, default='unknown')  # ✅ New field
+    estimated_income = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    nrc_number = models.CharField(max_length=50, default='unknown')  
     nrc_photo = models.ImageField(upload_to='nrc_photos/', null=True, blank=True)
-    phone_number = models.CharField(max_length=50, default='null')  # ✅ New field
+    phone_number = models.CharField(max_length=50, default='null')  
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
