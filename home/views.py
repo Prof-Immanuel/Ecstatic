@@ -25,6 +25,16 @@ def index(request):
 
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+import urllib.parse
+from PIL import Image
+from io import BytesIO
+
 @login_required(login_url='login')
 def apply_loan(request):
     if request.method == 'POST':
@@ -39,32 +49,37 @@ def apply_loan(request):
         estimated_income = request.POST.get('estimated_income')
         nrc_photo = request.FILES.get('nrc_photo')
 
+        # Basic validation
         if not nrc_number or not nrc_photo:
             messages.error(request, "Please enter your NRC number and upload a photo.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
         try:
-            # Compress the image in memory
-            img = Image.open(nrc_photo).convert("RGB")
-            buffer = BytesIO()
-            img.save(buffer, format='JPEG', quality=40, optimize=True)
-            buffer.seek(0)
+            # Compress image only if it's large
+            if nrc_photo.size > 1_000_000:  # 1MB
+                img = Image.open(nrc_photo).convert("RGB")
+                buffer = BytesIO()
+                img.save(buffer, format='JPEG', quality=40, optimize=True)
+                buffer.seek(0)
+                photo_data = buffer.read()
+            else:
+                photo_data = nrc_photo.read()
 
-            # Prepare and send email with photo
+            # Prepare email
             subject = "New Loan Application Submission"
             message = f"""
-            A new loan application has been submitted.
+A new loan application has been submitted.
 
-            Applicant: {request.user.first_name} {request.user.last_name}
-            Phone: {request.user.username}
-            NRC Number: {nrc_number}
-            Phone Number: {phone_number}
-            Amount Requested: {amount}
-            Loan Reason: {loan_reason}
-            Collateral: {collateral}
-            Location: {location}
-            Repayment Duration: {repayment_duration}
-            Estimated Monthly Income: {estimated_income}
+Applicant: {request.user.first_name} {request.user.last_name}
+Phone: {request.user.username}
+NRC Number: {nrc_number}
+Phone Number: {phone_number}
+Amount Requested: {amount}
+Loan Reason: {loan_reason}
+Collateral: {collateral}
+Location: {location}
+Repayment Duration: {repayment_duration}
+Estimated Monthly Income: {estimated_income}
             """
 
             email = EmailMessage(
@@ -73,22 +88,22 @@ def apply_loan(request):
                 settings.DEFAULT_FROM_EMAIL,
                 ['ecstaticfinance@gmail.com'],
             )
-            #email.attach('nrc_photo.jpg', buffer.read(), 'image/jpeg')
+            email.attach('nrc_photo.jpg', photo_data, 'image/jpeg')
             email.send(fail_silently=False)
 
-            # Send to WhatsApp
+            # WhatsApp redirect
             whatsapp_message = f"""
-            New Loan Application:
+New Loan Application:
 
-            Name: {request.user.first_name} {request.user.last_name}
-            NRC: {nrc_number}
-            Phone Number: {phone_number}
-            Amount: {amount}
-            Reason: {loan_reason}
-            Collateral: {collateral}
-            Location: {location}
-            Repayment Duration: {repayment_duration}
-            Estimated Income: {estimated_income}
+Name: {request.user.first_name} {request.user.last_name}
+NRC: {nrc_number}
+Phone Number: {phone_number}
+Amount: {amount}
+Reason: {loan_reason}
+Collateral: {collateral}
+Location: {location}
+Repayment Duration: {repayment_duration}
+Estimated Income: {estimated_income}
             """
             encoded = urllib.parse.quote(whatsapp_message)
             return HttpResponseRedirect(f"https://wa.me/260771131493?text={encoded}")
@@ -98,6 +113,7 @@ def apply_loan(request):
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 
