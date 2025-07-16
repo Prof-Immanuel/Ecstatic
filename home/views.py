@@ -12,6 +12,9 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 import urllib.parse
+from PIL import Image
+from io import BytesIO
+from django.core.files.base import ContentFile
 
 
 # Create your views here.
@@ -34,11 +37,35 @@ def apply_loan(request):
         repayment_duration = request.POST.get('repayment_duration')  
         nrc_number = request.POST.get('nrc_number')
         phone_number = request.POST.get('phone_number')
+        nrc_photo = request.FILES.get('nrc_photo')
 
         # Validate required fields
         if not nrc_number:
             messages.error(request, "Please enter your NRC number.", extra_tags="apply_loan")
             return redirect('apply_loan')
+
+        compressed_image = None
+        nrc_attachment = None
+        if nrc_photo:
+            try:
+                img = Image.open(nrc_photo)
+                img = img.convert('RGB')
+                img.thumbnail((800, 800))  # Resize if needed
+
+                buffer = BytesIO()
+                img.save(buffer, format='JPEG', quality=60)
+                buffer.seek(0)
+
+                # Prepare for model saving
+                compressed_image = ContentFile(buffer.read(), name=nrc_photo.name)
+
+                # Prepare for email attachment (separate copy)
+                buffer.seek(0)
+                nrc_attachment = (nrc_photo.name, buffer.read(), 'image/jpeg')
+
+            except Exception as e:
+                messages.error(request, f"Error compressing NRC photo: {e}", extra_tags="apply_loan")
+                return redirect('apply_loan')
 
         try:
             # Save the loan application
@@ -50,10 +77,11 @@ def apply_loan(request):
                 location=location,
                 repayment_duration=repayment_duration,
                 nrc_number=nrc_number,
-                phone_number=phone_number
+                phone_number=phone_number,
+                nrc_photo=compressed_image
             )
 
-            # Send email to the company
+            # Prepare email
             company_email = "ecstaticfinance@gmail.com"
             subject = "New Loan Application Submission"
             message = f"""
@@ -76,10 +104,15 @@ def apply_loan(request):
                 settings.DEFAULT_FROM_EMAIL,
                 [company_email],
             )
+
+            # Attach the image
+            if nrc_attachment:
+                email.attach(*nrc_attachment)
+
             email.send(fail_silently=False)
 
             # Redirect to WhatsApp
-            whatsapp_number = "260771131493"
+            whatsapp_number = "260767337145"
             whatsapp_message = f"""
             New Loan Application:
 
@@ -102,6 +135,7 @@ def apply_loan(request):
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 

@@ -22,6 +22,7 @@ class LoanApplication(models.Model):
         default='1week'
     )
     nrc_number = models.CharField(max_length=50, default='unknown')  # ✅ New field
+    nrc_photo = models.ImageField(upload_to='nrc_photos/', null=True, blank=True)
     phone_number = models.CharField(max_length=50, default='null')  # ✅ New field
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

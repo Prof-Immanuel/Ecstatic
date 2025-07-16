@@ -23,7 +23,7 @@
     </div>
 {% endif %}
 
-      <form action="{% url 'apply_loan' %}" method="POST">
+      <form action="{% url 'apply_loan' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <label for="amount">Loan Amount</label>
@@ -46,11 +46,18 @@
             <option value="4weeks">4 weeks - 40% interest</option>
         </select>
 
-        <label for="nrc-number">NRC Number</label>
-        <input type="text" id="nrc-number" name="nrc_number" required placeholder="Enter your NRC number">
 
         <label for="phone-number">Phone Number</label>
         <input type="text" id="phone-number" name="phone_number" required placeholder="Enter your Phone number">
+
+
+        <label for="nrc-number">NRC Number</label>
+        <input type="text" id="nrc-number" name="nrc_number" required placeholder="Enter your NRC number">
+
+
+        <label for="nrc-photo">Upload NRC Photo</label>
+        <input type="file" id="nrc-photo" name="nrc_photo" accept="image/*" required>
+
 
         <button type="submit">Submit Loan Application</button>
       </form>
