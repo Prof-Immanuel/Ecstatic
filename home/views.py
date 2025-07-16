@@ -15,14 +15,13 @@ import urllib.parse
 from PIL import Image
 from io import BytesIO
 from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 # Create your views here.
 def index(request):
     testimonials = Testimonial.objects.all().order_by('-created_at')
     return render(request, 'index.html', {'testimonials': testimonials})
-
-
 
 
 
@@ -33,58 +32,25 @@ def apply_loan(request):
         amount = request.POST.get('amount')
         loan_reason = request.POST.get('loan_reason')
         collateral = request.POST.get('collateral')
-        location = request.POST.get('location') 
-        repayment_duration = request.POST.get('repayment_duration') 
-        estimated_income = request.POST.get('estimated_income') 
+        location = request.POST.get('location')
+        repayment_duration = request.POST.get('repayment_duration')
         nrc_number = request.POST.get('nrc_number')
         phone_number = request.POST.get('phone_number')
+        estimated_income = request.POST.get('estimated_income')
         nrc_photo = request.FILES.get('nrc_photo')
 
-        # Validate required fields
-        if not nrc_number:
-            messages.error(request, "Please enter your NRC number.", extra_tags="apply_loan")
+        if not nrc_number or not nrc_photo:
+            messages.error(request, "Please enter your NRC number and upload a photo.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
-        compressed_image = None
-        nrc_attachment = None
-        if nrc_photo:
-            try:
-                img = Image.open(nrc_photo)
-                img = img.convert('RGB')
-                img.thumbnail((800, 800))  # Resize if needed
-
-                buffer = BytesIO()
-                img.save(buffer, format='JPEG', quality=60)
-                buffer.seek(0)
-
-                # Prepare for model saving
-                compressed_image = ContentFile(buffer.read(), name=nrc_photo.name)
-
-                # Prepare for email attachment (separate copy)
-                buffer.seek(0)
-                nrc_attachment = (nrc_photo.name, buffer.read(), 'image/jpeg')
-
-            except Exception as e:
-                messages.error(request, f"Error compressing NRC photo: {e}", extra_tags="apply_loan")
-                return redirect('apply_loan')
-
         try:
-            # Save the loan application
-            loan_application = LoanApplication.objects.create(
-                user=request.user,
-                amount=amount,
-                loan_reason=loan_reason,
-                collateral=collateral,
-                location=location,
-                repayment_duration=repayment_duration,
-                estimated_income=estimated_income,
-                nrc_number=nrc_number,
-                phone_number=phone_number,
-                nrc_photo=compressed_image
-            )
+            # Compress the image in memory
+            img = Image.open(nrc_photo).convert("RGB")
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', quality=40, optimize=True)
+            buffer.seek(0)
 
-            # Prepare email
-            company_email = "ecstaticfinance@gmail.com"
+            # Prepare and send email with photo
             subject = "New Loan Application Submission"
             message = f"""
             A new loan application has been submitted.
@@ -96,26 +62,21 @@ def apply_loan(request):
             Amount Requested: {amount}
             Loan Reason: {loan_reason}
             Collateral: {collateral}
-            Estimated Income: {estimated_income}
             Location: {location}
             Repayment Duration: {repayment_duration}
+            Estimated Monthly Income: {estimated_income}
             """
 
             email = EmailMessage(
                 subject,
                 message,
                 settings.DEFAULT_FROM_EMAIL,
-                [company_email],
+                ['ecstaticfinance@gmail.com'],
             )
-
-            # Attach the image
-            if nrc_attachment:
-                email.attach(*nrc_attachment)
-
+            email.attach('nrc_photo.jpg', buffer.read(), 'image/jpeg')
             email.send(fail_silently=False)
 
-            # Redirect to WhatsApp
-            whatsapp_number = "260767337145"
+            # Send to WhatsApp
             whatsapp_message = f"""
             New Loan Application:
 
@@ -125,20 +86,20 @@ def apply_loan(request):
             Amount: {amount}
             Reason: {loan_reason}
             Collateral: {collateral}
-            Estimated Income: {estimated_income}
             Location: {location}
             Repayment Duration: {repayment_duration}
+            Estimated Income: {estimated_income}
             """
-            encoded_message = urllib.parse.quote(whatsapp_message)
-            whatsapp_url = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
-
-            return HttpResponseRedirect(whatsapp_url)
+            encoded = urllib.parse.quote(whatsapp_message)
+            return HttpResponseRedirect(f"https://wa.me/260771131493?text={encoded}")
 
         except Exception as e:
             messages.error(request, f"An error occurred: {e}. Please try again.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
+
 
 
 
