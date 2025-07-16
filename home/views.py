@@ -73,7 +73,7 @@ def apply_loan(request):
                 settings.DEFAULT_FROM_EMAIL,
                 ['ecstaticfinance@gmail.com'],
             )
-            email.attach('nrc_photo.jpg', buffer.read(), 'image/jpeg')
+            #email.attach('nrc_photo.jpg', buffer.read(), 'image/jpeg')
             email.send(fail_silently=False)
 
             # Send to WhatsApp
