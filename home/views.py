@@ -49,49 +49,21 @@ def apply_loan(request):
         estimated_income = request.POST.get('estimated_income')
         nrc_photo = request.FILES.get('nrc_photo')
 
-        # Basic validation
         if not nrc_number or not nrc_photo:
             messages.error(request, "Please enter your NRC number and upload a photo.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
         try:
-            # Compress image only if it's large
-            if nrc_photo.size > 1_000_000:  # 1MB
-                img = Image.open(nrc_photo).convert("RGB")
+            # Compress if needed
+            photo_data = nrc_photo.read()
+            if nrc_photo.size > 500_000:  # Compress if >500KB
+                img = Image.open(BytesIO(photo_data)).convert("RGB")
                 buffer = BytesIO()
                 img.save(buffer, format='JPEG', quality=40, optimize=True)
                 buffer.seek(0)
                 photo_data = buffer.read()
-            else:
-                photo_data = nrc_photo.read()
 
-            # Prepare email
-            subject = "New Loan Application Submission"
-            message = f"""
-A new loan application has been submitted.
-
-Applicant: {request.user.first_name} {request.user.last_name}
-Phone: {request.user.username}
-NRC Number: {nrc_number}
-Phone Number: {phone_number}
-Amount Requested: {amount}
-Loan Reason: {loan_reason}
-Collateral: {collateral}
-Location: {location}
-Repayment Duration: {repayment_duration}
-Estimated Monthly Income: {estimated_income}
-            """
-
-            email = EmailMessage(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                ['ecstaticfinance@gmail.com'],
-            )
-            email.attach('nrc_photo.jpg', photo_data, 'image/jpeg')
-            email.send(fail_silently=False)
-
-            # WhatsApp redirect
+            # WhatsApp message
             whatsapp_message = f"""
 New Loan Application:
 
@@ -106,13 +78,37 @@ Repayment Duration: {repayment_duration}
 Estimated Income: {estimated_income}
             """
             encoded = urllib.parse.quote(whatsapp_message)
-            return HttpResponseRedirect(f"https://wa.me/260771131493?text={encoded}")
+            whatsapp_url = f"https://wa.me/260771131493?text={encoded}"
+
+            # Email
+            subject = "New Loan Application Submission"
+            body = f"""
+A new loan application has been submitted.
+
+Applicant: {request.user.first_name} {request.user.last_name}
+Phone: {request.user.username}
+NRC Number: {nrc_number}
+Phone Number: {phone_number}
+Amount Requested: {amount}
+Loan Reason: {loan_reason}
+Collateral: {collateral}
+Location: {location}
+Repayment Duration: {repayment_duration}
+Estimated Monthly Income: {estimated_income}
+            """
+
+            email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
+            email.attach('nrc_photo.jpg', photo_data, 'image/jpeg')
+            email.send(fail_silently=True)  # Non-blocking
+
+            return HttpResponseRedirect(whatsapp_url)
 
         except Exception as e:
             messages.error(request, f"An error occurred: {e}. Please try again.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 
