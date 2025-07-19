@@ -1,13 +1,15 @@
 {
-  "builds": [{
-      "src": "ecstatic/wsgi.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.8.13" }
-  }],
-  "routes": [
+    "builds": [
       {
-          "src": "/(.*)",
-          "dest": "ecstatic/wsgi.py"
+        "src": "server.js",
+        "use": "@vercel/node"
       }
-  ]
-}
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/server.js",
+        "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
+      }
+    ]
+  }
