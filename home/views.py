@@ -12,6 +12,8 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 import urllib.parse
+from PIL import Image
+from io import BytesIO
 
 
 
@@ -41,6 +43,22 @@ def apply_loan(request):
             return redirect('apply_loan')
 
         try:
+            # 📷 Compress the NRC photo using Pillow
+            image = Image.open(nrc_photo)
+            image_io = BytesIO()
+
+            # Resize if necessary
+            max_size = (800, 800)
+            image.thumbnail(max_size, Image.ANTIALIAS)
+
+            # Save compressed image to memory
+            image.save(image_io, format='JPEG', quality=70)
+            image_io.seek(0)
+
+            # Create compressed image attachment
+            compressed_name = f"compressed_{nrc_photo.name}"
+            compressed_photo = image_io.read()
+
             # WhatsApp message
             whatsapp_message = f"""
             New Loan Application:
@@ -58,7 +76,7 @@ def apply_loan(request):
             encoded = urllib.parse.quote(whatsapp_message)
             whatsapp_url = f"https://wa.me/260771131493?text={encoded}"
 
-            # Email
+            # Email setup
             subject = "New Loan Application Submission"
             body = f"""
             A new loan application has been submitted.
@@ -75,9 +93,8 @@ def apply_loan(request):
             Estimated Monthly Income: {estimated_income}
             """
 
-            # Send email with NRC photo attached
             email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
-            email.attach(nrc_photo.name, nrc_photo.read(), nrc_photo.content_type)
+            email.attach(compressed_name, compressed_photo, 'image/jpeg')
             email.send(fail_silently=True)
 
             return HttpResponseRedirect(whatsapp_url)
@@ -87,6 +104,7 @@ def apply_loan(request):
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 
