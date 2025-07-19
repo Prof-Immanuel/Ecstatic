@@ -12,8 +12,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 import urllib.parse
-from PIL import Image
-from io import BytesIO
+
 
 
 # Create your views here.
@@ -42,15 +41,6 @@ def apply_loan(request):
             return redirect('apply_loan')
 
         try:
-            # Compress if needed
-            photo_data = nrc_photo.read()
-            if nrc_photo.size > 500_000:  # Compress if >500KB
-                img = Image.open(BytesIO(photo_data)).convert("RGB")
-                buffer = BytesIO()
-                img.save(buffer, format='JPEG', quality=40, optimize=True)
-                buffer.seek(0)
-                photo_data = buffer.read()
-
             # WhatsApp message
             whatsapp_message = f"""
             New Loan Application:
@@ -83,11 +73,12 @@ def apply_loan(request):
             Location: {location}
             Repayment Duration: {repayment_duration}
             Estimated Monthly Income: {estimated_income}
-                        """
+            """
 
+            # Send email with NRC photo attached
             email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
-            email.attach('nrc_photo.jpg', photo_data, 'image/jpeg')
-            email.send(fail_silently=True)  # Non-blocking
+            email.attach(nrc_photo.name, nrc_photo.read(), nrc_photo.content_type)
+            email.send(fail_silently=True)
 
             return HttpResponseRedirect(whatsapp_url)
 
@@ -98,17 +89,6 @@ def apply_loan(request):
     return render(request, 'loan_application.html')
 
 
-
-
-
-
-
-
-
-
-
-from datetime import timedelta
-from decimal import Decimal
 
 @login_required(login_url='login')
 def user_dashboard(request):
