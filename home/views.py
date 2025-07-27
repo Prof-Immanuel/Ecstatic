@@ -24,6 +24,8 @@ def index(request):
 
 
 
+
+
 @login_required(login_url='login')
 def apply_loan(request):
     if request.method == 'POST':
@@ -43,17 +45,26 @@ def apply_loan(request):
             return redirect('apply_loan')
 
         try:
-            # 📷 Compress the NRC photo using Pillow
+            # 📷 Compress the NRC photo
             image = Image.open(nrc_photo)
             image_io = BytesIO()
 
-            # Resize if necessary
+            # Convert to RGB if not already
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+
+            # Resize (thumbnail auto-preserves aspect ratio)
             max_size = (800, 800)
             image.thumbnail(max_size, Image.ANTIALIAS)
 
-            # Save compressed image to memory
-            image.save(image_io, format='JPEG', quality=40)
+            # Save to buffer with higher compression
+            image.save(image_io, format='JPEG', quality=50, optimize=True)
             image_io.seek(0)
+
+            # Safety check: make sure image isn't too big
+            if image_io.getbuffer().nbytes > 1_000_000:  # 1MB
+                messages.error(request, "Image is still too large even after compression. Try uploading a smaller photo.", extra_tags="apply_loan")
+                return redirect('apply_loan')
 
             # Create compressed image attachment
             compressed_name = f"compressed_{nrc_photo.name}"
@@ -104,6 +115,7 @@ def apply_loan(request):
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 
