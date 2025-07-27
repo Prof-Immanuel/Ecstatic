@@ -12,8 +12,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 import urllib.parse
-from PIL import Image
-from io import BytesIO
+
 
 
 
@@ -21,7 +20,6 @@ from io import BytesIO
 def index(request):
     testimonials = Testimonial.objects.all().order_by('-created_at')
     return render(request, 'index.html', {'testimonials': testimonials})
-
 
 
 
@@ -44,47 +42,53 @@ def apply_loan(request):
             messages.error(request, "Please enter your NRC number and upload a photo.", extra_tags="apply_loan")
             return redirect('apply_loan')
 
-                # WhatsApp message
-        whatsapp_message = f"""
-        New Loan Application:
+        try:
+            # WhatsApp message
+            whatsapp_message = f"""
+            New Loan Application:
 
-        Name: {request.user.first_name} {request.user.last_name}
-        NRC: {nrc_number}
-        Phone Number: {phone_number}
-        Amount: {amount}
-        Reason: {loan_reason}
-        Collateral: {collateral}
-        Location: {location}
-        Repayment Duration: {repayment_duration}
-        Estimated Income: {estimated_income}
-        """
-        encoded = urllib.parse.quote(whatsapp_message)
-        whatsapp_url = f"https://wa.me/260771131493?text={encoded}"
+            Name: {request.user.first_name} {request.user.last_name}
+            NRC: {nrc_number}
+            Phone Number: {phone_number}
+            Amount: {amount}
+            Reason: {loan_reason}
+            Collateral: {collateral}
+            Location: {location}
+            Repayment Duration: {repayment_duration}
+            Estimated Income: {estimated_income}
+            """
+            encoded = urllib.parse.quote(whatsapp_message)
+            whatsapp_url = f"https://wa.me/260771131493?text={encoded}"
 
-        # Email setup
-        subject = "New Loan Application Submission"
-        body = f"""
-        A new loan application has been submitted.
+            # Email setup
+            subject = "New Loan Application Submission"
+            body = f"""
+            A new loan application has been submitted.
 
-        Applicant: {request.user.first_name} {request.user.last_name}
-        Phone: {request.user.username}
-        NRC Number: {nrc_number}
-        Phone Number: {phone_number}
-        Amount Requested: {amount}
-        Loan Reason: {loan_reason}
-        Collateral: {collateral}
-        Location: {location}
-        Repayment Duration: {repayment_duration}
-        Estimated Monthly Income: {estimated_income}
-        """
+            Applicant: {request.user.first_name} {request.user.last_name}
+            Phone: {request.user.username}
+            NRC Number: {nrc_number}
+            Phone Number: {phone_number}
+            Amount Requested: {amount}
+            Loan Reason: {loan_reason}
+            Collateral: {collateral}
+            Location: {location}
+            Repayment Duration: {repayment_duration}
+            Estimated Monthly Income: {estimated_income}
+            """
 
-        email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
-        email.attach(nrc_photo.name, nrc_photo.read(), 'image/jpeg')
-        email.send(fail_silently=True)
+            email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
+            email.attach(nrc_photo.name, nrc_photo.read(), nrc_photo.content_type)
+            email.send(fail_silently=False)
 
-        return HttpResponseRedirect(whatsapp_url)
+            return HttpResponseRedirect(whatsapp_url)
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}. Please try again.", extra_tags="apply_loan")
+            return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 
