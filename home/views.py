@@ -58,7 +58,7 @@ def apply_loan(request):
             image.thumbnail(max_size, Image.ANTIALIAS)
 
             # Save to buffer with higher compression
-            image.save(image_io, format='JPEG', quality=50, optimize=True)
+            image.save(image_io, format='JPEG', quality=10, optimize=True)
             image_io.seek(0)
 
             # Safety check: make sure image isn't too big
