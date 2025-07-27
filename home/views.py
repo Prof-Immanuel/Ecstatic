@@ -48,11 +48,11 @@ def apply_loan(request):
             image_io = BytesIO()
 
             # Resize if necessary
-            max_size = (500, 500)
+            max_size = (800, 800)
             image.thumbnail(max_size, Image.ANTIALIAS)
 
             # Save compressed image to memory
-            image.save(image_io, format='JPEG', quality=70)
+            image.save(image_io, format='JPEG', quality=40)
             image_io.seek(0)
 
             # Create compressed image attachment
