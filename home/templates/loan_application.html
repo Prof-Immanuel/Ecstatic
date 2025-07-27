@@ -72,44 +72,53 @@
     </div>
   </div>
   <script>
-    function compressImage(file, quality, callback) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+    function compressImage(file, quality = 0.7, maxWidth = 800) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
     
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target.result;
+            // Resize image while maintaining aspect ratio
+            const scale = Math.min(maxWidth / img.width, 1);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
     
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     
-          // Set canvas dimensions
-          canvas.width = img.width;
-          canvas.height = img.height;
-    
-          // Draw the image on the canvas
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    
-          // Compress the image
-          canvas.toBlob(
-            (blob) => {
-              callback(blob); // Return the compressed image as a Blob
-            },
-            'image/jpeg', // Output format
-            quality // Compression quality (0 to 1)
-          );
+            // Compress image to desired quality
+            canvas.toBlob(
+              (blob) => {
+                if (blob) resolve(blob);
+                else reject(new Error('Compression failed.'));
+              },
+              'image/jpeg', // Output format
+              quality // Compression quality (0.0 - 1.0)
+            );
+          };
+          img.src = event.target.result;
         };
-      };
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+      });
     }
     
     // Usage Example
-    document.getElementById('nrc-photo').addEventListener('change', (event) => {
+    document.getElementById('nrc-photo').addEventListener('change', async (event) => {
       const file = event.target.files[0];
-      compressImage(file, 0.7, (compressedBlob) => {
-        console.log('Compressed image:', compressedBlob);
-        // You can now upload the compressedBlob to your server
-      });
+      if (file) {
+        try {
+          const compressedBlob = await compressImage(file);
+          const compressedFile = new File([compressedBlob], file.name, { type: 'image/jpeg' });
+    
+          // Now you can upload `compressedFile` to your server
+          console.log('Compressed file:', compressedFile);
+        } catch (error) {
+          console.error('Error compressing image:', error);
+        }
+      }
     });
     
   </script>
