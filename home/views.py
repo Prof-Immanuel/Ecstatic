@@ -45,31 +45,6 @@ def apply_loan(request):
             return redirect('apply_loan')
 
         try:
-            # 📷 Compress the NRC photo
-            image = Image.open(nrc_photo)
-            image_io = BytesIO()
-
-            # Convert to RGB if not already
-            if image.mode != 'RGB':
-                image = image.convert('RGB')
-
-            # Resize (thumbnail auto-preserves aspect ratio)
-            max_size = (800, 800)
-            image.thumbnail(max_size, Image.ANTIALIAS)
-
-            # Save to buffer with higher compression
-            image.save(image_io, format='JPEG', quality=10, optimize=True)
-            image_io.seek(0)
-
-            # Safety check: make sure image isn't too big
-            if image_io.getbuffer().nbytes > 1_000_000:  # 1MB
-                messages.error(request, "Image is still too large even after compression. Try uploading a smaller photo.", extra_tags="apply_loan")
-                return redirect('apply_loan')
-
-            # Create compressed image attachment
-            compressed_name = f"compressed_{nrc_photo.name}"
-            compressed_photo = image_io.read()
-
             # WhatsApp message
             whatsapp_message = f"""
             New Loan Application:
@@ -105,7 +80,7 @@ def apply_loan(request):
             """
 
             email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
-            email.attach(compressed_name, compressed_photo, 'image/jpeg')
+            email.attach(nrc_photo.name, nrc_photo.read(), nrc_photo.content_type)
             email.send(fail_silently=True)
 
             return HttpResponseRedirect(whatsapp_url)
@@ -115,6 +90,7 @@ def apply_loan(request):
             return redirect('apply_loan')
 
     return render(request, 'loan_application.html')
+
 
 
 

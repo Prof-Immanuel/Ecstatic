@@ -2,8 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Apply for a Loan - Ecstatic</title>
   <link rel="stylesheet" href="{% static 'loan_application.css' %}">
 </head>
@@ -12,26 +12,25 @@
     <div class="loan-container">
       <h2>Loan Application</h2>
       {% if messages %}
-    <div class="alert-container">
-        {% for message in messages %}
-        {% if "apply_loan" in message.tags %}
-            <div class="alert {{ message.tags }}">
+        <div class="alert-container">
+          {% for message in messages %}
+            {% if "apply_loan" in message.tags %}
+              <div class="alert {{ message.tags }}">
                 {{ message }}
-            </div>
-        {% endif %}
-        {% endfor %}
-    </div>
-{% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
 
-      <form action="{% url 'apply_loan' %}" method="POST" enctype="multipart/form-data">
+      <form id="loan-form" action="{% url 'apply_loan' %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-
         <label for="amount">Loan Amount</label>
         <input type="number" step="0.01" id="amount" name="amount" required placeholder="Enter the loan amount">
 
         <label for="loan-reason">Reason for Loan</label>
         <textarea id="loan-reason" name="loan_reason" required placeholder="Enter the reason for applying"></textarea>
-        
+
         <label for="collateral">Collateral</label>
         <input type="text" id="collateral" name="collateral" required placeholder="Enter your collateral">
 
@@ -40,36 +39,64 @@
 
         <label for="repayment-duration">Repayment Duration</label>
         <select id="repayment-duration" name="repayment_duration" required>
-            <option value="1week">1 week - 15% interest</option>
-            <option value="2weeks">2 weeks - 20% interest</option>
-            <option value="3weeks">3 weeks - 30% interest</option>
-            <option value="4weeks">4 weeks - 40% interest</option>
+          <option value="1week">1 week - 15% interest</option>
+          <option value="2weeks">2 weeks - 20% interest</option>
+          <option value="3weeks">3 weeks - 30% interest</option>
+          <option value="4weeks">4 weeks - 40% interest</option>
         </select>
 
         <label for="estimated_income">Estimated Monthly Income (ZMW):</label>
         <input type="number" step="0.01" name="estimated_income" required>
 
-
         <label for="phone-number">Phone Number</label>
         <input type="text" id="phone-number" name="phone_number" required placeholder="Enter your Phone number">
-
 
         <label for="nrc-number">NRC Number</label>
         <input type="text" id="nrc-number" name="nrc_number" required placeholder="Enter your NRC number">
 
-
         <label for="nrc-photo">Upload NRC Photo</label>
         <input type="file" id="nrc-photo" name="nrc_photo" accept="image/*" required>
-
 
         <button type="submit">Submit Loan Application</button>
       </form>
 
-    
       <p class="info-text">
         Note: Loan applications are subject to approval. You will be notified via phone once your application is reviewed.
       </p>
     </div>
   </div>
+
+  <!-- Include image compression library -->
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+  <script>
+    const form = document.getElementById('loan-form');
+    const nrcInput = document.getElementById('nrc-photo');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const file = nrcInput.files[0];
+      if (!file) return form.submit();
+
+      const options = {
+        maxSizeMB: 1, // Limit size to ~1MB
+        maxWidthOrHeight: 1024,
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedFile = await imageCompression(file, options);
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(compressedFile);
+        nrcInput.files = dataTransfer.files;
+
+        form.submit(); // Now submit with compressed file
+      } catch (err) {
+        console.error("Image compression failed:", err);
+        alert("Failed to compress image. Please try a smaller photo.");
+      }
+    });
+  </script>
 </body>
 </html>
