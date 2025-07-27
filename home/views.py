@@ -79,7 +79,7 @@ def apply_loan(request):
 
             email = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, ['ecstaticfinance@gmail.com'])
             email.attach(nrc_photo.name, nrc_photo.read(), nrc_photo.content_type)
-            email.send()
+            email.send(fail_silently=True)
 
             return HttpResponseRedirect(whatsapp_url)
 
